@@ -1,17 +1,31 @@
-import React from "react";
+import React, { Component } from "react";
 import { Button } from "reactstrap";
 
 import "./post-status-filter.css";
 
-const PostStatusFilter = () => {
-	return (
-		<div className="btn-group">
-			<Button color="info">All</Button>
-			<button type="button" className="btn btn-outline-secondary">
-				Liked
-			</button>
-		</div>
-	);
-};
-
-export default PostStatusFilter;
+export default class PostStatusFilter extends Component {
+	constructor(props) {
+		super(props);
+		this.buttons = [
+			{ name: "all", label: "All" },
+			{ name: "like", label: "Liked" },
+		];
+	}
+	render() {
+		const buttons = this.buttons.map(({ name, label }) => {
+			const { filter, onFilterSelect } = this.props;
+			const active = filter == name;
+			const clazz = active ? "info" : "outline-info";
+			return (
+				<Button
+					onClick={() => onFilterSelect(name)}
+					key={name}
+					color={clazz}
+				>
+					{label}
+				</Button>
+			);
+		});
+		return <div className="btn-group">{buttons}</div>;
+	}
+}
