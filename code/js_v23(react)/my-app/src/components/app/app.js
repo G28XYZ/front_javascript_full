@@ -22,13 +22,25 @@ export default class App extends Component {
 		super(props);
 		this.state = {
 			data: [
-				{ label: "Going to learn React", important: true, id: 1 },
-				{ label: "That is good", important: false, id: 2 },
-				{ label: "I need a break...", important: false, id: 3 },
+				{
+					label: "Going to learn React",
+					important: true,
+					like: false,
+					id: 1,
+				},
+				{ label: "That is good", important: false, like: false, id: 2 },
+				{
+					label: "I need a break...",
+					important: false,
+					like: false,
+					id: 3,
+				},
 			],
 		};
 		this.deleteItem = this.deleteItem.bind(this);
 		this.addItem = this.addItem.bind(this);
+		this.onToggleImportant = this.onToggleImportant.bind(this);
+		this.onToggleLiked = this.onToggleLiked.bind(this);
 
 		this.maxId = 4;
 	}
@@ -53,15 +65,41 @@ export default class App extends Component {
 		});
 	}
 
+	onToggleImportant(id) {
+		this.setState(({ data }) => {
+			const index = data.findIndex((elem) => elem.id == id);
+			const copyData = [...data];
+			copyData[index].important = !copyData[index].important;
+			return { data: copyData };
+		});
+	}
+
+	onToggleLiked(id) {
+		this.setState(({ data }) => {
+			const index = data.findIndex((elem) => elem.id == id);
+			const copyData = [...data];
+			copyData[index].like = !copyData[index].like;
+			return { data: copyData };
+		});
+	}
+
 	render() {
+		const { data } = this.state;
+		const liked = data.filter((item) => item.like).length;
+		const allPosts = data.length;
 		return (
 			<StyledAppBlock>
-				<AppHeader />
+				<AppHeader liked={liked} allPosts={allPosts} />
 				<div className="search-panel d-flex">
 					<SearchPanel />
 					<PostStatusFilter />
 				</div>
-				<PostList posts={this.state.data} onDelete={this.deleteItem} />
+				<PostList
+					posts={this.state.data}
+					onDelete={this.deleteItem}
+					onToggleImportant={this.onToggleImportant}
+					onToggleLiked={this.onToggleLiked}
+				/>
 				<PostAddForm onAdd={this.addItem} />
 			</StyledAppBlock>
 		);
