@@ -1,13 +1,14 @@
 import React, { Component } from "react";
+import { Col, Row, Container } from "reactstrap";
 import ItemList from "../itemList";
 import Details, { Field } from "../details/";
 import ErrorMessage from "../errorMessage/";
 import RowBlock from "../rowBlock/";
 import GotService from "../../services/gotService";
 
-export default class CharacterPage extends Component {
+export default class HousesPage extends Component {
 	state = {
-		selectedChar: null,
+		selectedHouse: null,
 		error: false,
 	};
 
@@ -18,7 +19,7 @@ export default class CharacterPage extends Component {
 	}
 
 	onItemSelected = (id) => {
-		this.setState({ selectedChar: id });
+		this.setState({ selectedHouse: id });
 	};
 
 	render() {
@@ -29,23 +30,21 @@ export default class CharacterPage extends Component {
 		const itemList = (
 			<ItemList
 				onItemSelected={this.onItemSelected}
-				getData={this.gotService.getAllCharacters}
-				renderItem={({ name, gender }) => `${name} (${gender})`}
+				getData={this.gotService.getAllHouses}
+				renderItem={({ name, region }) => `${name} (${region})`}
 			/>
 		);
 
-		const charDetails = (
+		const housesDetails = (
 			<Details
-				Id={this.state.selectedChar}
-				getDetails={this.gotService.getCharacter}
+				Id={this.state.selectedHouse}
+				getDetails={this.gotService.getHouse}
 			>
-				<Field field="gender" label="Gender" />
-				<Field field="born" label="Born" />
-				<Field field="died" label="Died" />
-				<Field field="culture" label="Culture" />
+				<Field field="region" label="Region" />
+				<Field field="words" label="Words" />
 			</Details>
 		);
 
-		return <RowBlock left={itemList} right={charDetails} />;
+		return <RowBlock left={itemList} right={housesDetails} />;
 	}
 }
