@@ -1,20 +1,10 @@
 import React, { Component } from "react";
 import "./itemList.css";
-
+import PropTypes from "prop-types";
 import Spinner from "../spinner/";
+import GotService from "../../services/gotService";
 
-export default class ItemList extends Component {
-    state = {
-        itemList: null,
-    };
-
-    componentDidMount() {
-        const { getData } = this.props;
-        getData().then((itemList) => {
-            this.setState({ itemList });
-        });
-    }
-
+class ItemList extends Component {
     renderItems(arr) {
         return arr.map((item, i) => {
             const { id } = item;
@@ -32,13 +22,36 @@ export default class ItemList extends Component {
     }
 
     render() {
-        const { itemList } = this.state;
-        if (!itemList) {
-            return <Spinner />;
-        }
-
-        const items = this.renderItems(itemList);
+        const { data } = this.props;
+        const items = this.renderItems(data);
 
         return <ul className="item-list list-group">{items}</ul>;
     }
 }
+
+ItemList.defaultProps = { onItemSelected: () => {} };
+
+const withData = (View, getData) => {
+    return class extends Component {
+        state = {
+            data: null,
+        };
+
+        componentDidMount() {
+            getData().then((data) => {
+                this.setState({ data });
+            });
+        }
+
+        render() {
+            const { data } = this.state;
+            if (!data) {
+                return <Spinner />;
+            }
+            return <View {...this.props} data={data} />;
+        }
+    };
+};
+
+const { getAllCharacters } = new GotService();
+export default withData(ItemList, getAllCharacters);
